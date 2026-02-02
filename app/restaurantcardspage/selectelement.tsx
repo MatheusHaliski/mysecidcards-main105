@@ -93,7 +93,7 @@ export function SearchSelect<T extends string>({
     onClick={() => setOpen((v) => !v)}
     aria-haspopup="listbox"
     aria-expanded={open}
-    className={`w-full rounded-xl border border-black bg-white px-4 py-5 text-base font-semibold text-black shadow-lg shadow-black/20 transition ${
+    className={`flex h-12 w-full items-center justify-between rounded-xl border-2 border-black bg-white px-4 text-base font-semibold text-black shadow-lg shadow-black/20 transition ${
         disabled
             ? "cursor-not-allowed opacity-70"
             : "hover:bg-neutral-100"
@@ -108,7 +108,7 @@ export function SearchSelect<T extends string>({
     {open && (
         <div
             role="listbox"
-        className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 rounded-3xl border border-black bg-white shadow-xl shadow-black/30 backdrop-blur"
+        className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 rounded-3xl border-2 border-black bg-white shadow-xl shadow-black/30 backdrop-blur"
         >
         <div className="border-b border-black p-2.5">
         <input
@@ -117,7 +117,7 @@ export function SearchSelect<T extends string>({
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={searchPlaceholder}
-        className="h-12 w-full rounded-xl border border-black bg-white px-3 text-black placeholder:text-neutral-500 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40"
+        className="h-12 w-full rounded-xl border-2 border-black bg-white px-3 text-black placeholder:text-neutral-500 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40"
             />
             </div>
 

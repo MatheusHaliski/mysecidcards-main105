@@ -64,18 +64,18 @@ export default function RestaurantInfoFront({ restaurant, reviews }: Props) {
     .join(", ");
 
   return (
-    <div className="min-h-screen w-full bg-black text-black">
+    <div className="min-h-screen w-full bg-[#ccd99c] text-black">
       <div className="mx-auto max-w-6xl px-6 py-8">
         {/* ===== HEADER ===== */}
         <header
           className={[
-            "relative overflow-hidden rounded-3xl border border-black",
+            "relative overflow-hidden rounded-3xl border-2 border-black",
             "bg-white backdrop-blur-2xl mb-6",
             FILTER_GLOW_LINE,
           ].join(" ")}
         >
           <div className="relative grid gap-6 p-6 md:grid-cols-[300px_1fr]">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-black bg-white">
+            <div className="aspect-[4/3] overflow-hidden rounded-2xl border-2 border-black bg-white">
               {restaurant.photo ? (
                 <img
                   src={restaurant.photo}
@@ -99,7 +99,7 @@ export default function RestaurantInfoFront({ restaurant, reviews }: Props) {
                 <span className="font-semibold">{locationLine}</span>
               </div>
 
-              <div className="mt-4 inline-flex items-center gap-2 rounded-2xl border border-black bg-white px-4 py-2">
+              <div className="mt-4 inline-flex items-center gap-2 rounded-2xl border-2 border-black bg-white px-4 py-2">
                 <span className="text-black font-bold text-lg">{"★".repeat(rounded)}</span>
                 <span className="text-sm text-black/70">{display.toFixed(1)} / 5</span>
               </div>
@@ -118,7 +118,7 @@ export default function RestaurantInfoFront({ restaurant, reviews }: Props) {
               {reviews.map((review) => (
                 <li
                   key={review.id}
-                  className="rounded-2xl border border-black bg-white p-4"
+                  className="rounded-2xl border-2 border-black bg-white p-4"
                 >
                   <div className="flex items-center gap-3">
                     {review.userPhoto && (

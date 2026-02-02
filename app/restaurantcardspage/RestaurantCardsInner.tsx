@@ -27,26 +27,26 @@ const hasFirebaseConfig = firebaseAuthGate();
 // ============================
 // ✅ Microsoft / Apple / LinkedIn tokens
 // ============================
-const PAGE_BG = "bg-black";
+const PAGE_BG = "bg-[#ccd99c]";
 const HEADER =
-    "rounded-3xl border border-black bg-white shadow-[0_14px_40px_rgba(0,0,0,0.18)] text-black";
+    "rounded-3xl border-2 border-black bg-white shadow-[0_14px_40px_rgba(0,0,0,0.18)] text-black";
 const CARD =
-    "rounded-3xl border border-black bg-white backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.18)] text-black";
+    "rounded-3xl border-2 border-black bg-white backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.18)] text-black";
 const INPUT =
-    "h-11 w-full rounded-xl border border-black bg-white px-3 text-black placeholder:text-neutral-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
+    "h-12 w-full rounded-xl border-2 border-black bg-white px-3 text-black placeholder:text-neutral-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const PILL =
-    "inline-flex items-center gap-2 rounded-full border border-black bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm";
 const BTN =
-    "inline-flex h-11 items-center justify-center rounded-xl border border-black bg-white px-4 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
+    "inline-flex h-12 items-center justify-center rounded-xl border-2 border-black bg-white px-4 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const BTN_PRIMARY =
-    "inline-flex h-11 items-center justify-center rounded-xl border border-black bg-black px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-900 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
+    "inline-flex h-12 items-center justify-center rounded-xl border-2 border-black bg-black px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-900 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const BADGE =
-    "inline-flex items-center gap-2 rounded-full border border-black bg-white px-3 py-1 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100";
 const BADGE_INFO =
-    "inline-flex items-center gap-2 rounded-full border border-black bg-white px-3 py-1 text-sm font-medium text-black";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-medium text-black";
 // Dropdown UX fix: keep it ABOVE everything and never clipped by parent
 const DROPDOWN =
-    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999] rounded-2xl border border-black bg-white shadow-2xl";
+    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999] rounded-2xl border-2 border-black bg-white shadow-2xl";
 const DROPDOWN_ITEM =
     "flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-black transition hover:bg-neutral-100";
 
@@ -298,10 +298,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                     <img
                                         src={getUserPhotoUrl(user)}
                                         alt={`${getUserDisplayName(user) ||getUserEmail(user) || "User"} profile`}
-                                        className="h-10 w-10 rounded-2xl border border-black object-cover"
+                                        className="h-10 w-10 rounded-2xl border-2 border-black object-cover"
                                     />
                                 ) : (
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-black bg-white text-sm font-bold text-black">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border-2 border-black bg-white text-sm font-bold text-black">
                                         U
                                     </div>
                                 )}
@@ -330,8 +330,8 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
                     <div className="mt-5 h-px w-full bg-black" />
 
-                    <div className="relative mt-4">
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
+                    <div className="relative mt-4 space-y-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                             <input
                                 type="text"
                                 value={nameQuery}
@@ -340,6 +340,22 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 className={INPUT}
                             />
 
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setNameQuery("");
+                                    setCargo("");
+                                    setFuncao("");
+                                    setRegional("");
+                                    setOnlyFavorites(false);
+                                }}
+                                className={BTN_PRIMARY}
+                            >
+                                Clear
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
                             <SearchSelect
                                 value={cargo}
                                 options={availableCargos as string[]}
@@ -384,20 +400,6 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                             >
                                 {onlyFavorites ? "★ Favorites" : "☆ Favorites"}
                             </button>
-
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setNameQuery("");
-                                    setCargo("");
-                                    setFuncao("");
-                                    setRegional("");
-                                    setOnlyFavorites(false);
-                                }}
-                                className={BTN_PRIMARY}
-                            >
-                                Clear
-                            </button>
                         </div>
                     </div>
                 </header>
@@ -410,7 +412,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                     )}
 
                     {!loading && error && (
-                        <div className="whitespace-pre-wrap rounded-2xl border border-black bg-white px-5 py-4 text-sm font-semibold text-black">
+                        <div className="whitespace-pre-wrap rounded-2xl border-2 border-black bg-white px-5 py-4 text-sm font-semibold text-black">
                             {error}
                         </div>
                     )}
@@ -474,7 +476,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                             aria-label={fav ? "Unfavorite" : "Favorite"}
                                             className={[
                                                 "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
-                                                "border border-black bg-white shadow-sm",
+                                                "border-2 border-black bg-white shadow-sm",
                                                 "transition hover:bg-neutral-100 active:scale-[0.98]",
                                                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
                                             ].join(" ")}

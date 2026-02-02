@@ -1,7 +1,7 @@
 // src/app/gate/uiTokens.ts
-export const GLASS = "border border-black bg-white";
+export const GLASS = "border-2 border-black bg-white";
 
-export const GLASS_DEEP = "border border-black bg-white backdrop-blur-2xl";
+export const GLASS_DEEP = "border-2 border-black bg-white backdrop-blur-2xl";
 
 export const FILTER_GLOW_BAR =
     "bg-white shadow-[0_0_0_2px_rgba(0,0,0,1),0_12px_40px_rgba(0,0,0,0.18)]";
@@ -23,13 +23,13 @@ export const TEXT_GLOW =
 
 // (opcional) tokens mais usados no teu projeto
 export const GLASS_PANEL =
-    "relative rounded-3xl border border-black bg-white backdrop-blur-2xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]";
+    "relative rounded-3xl border-2 border-black bg-white backdrop-blur-2xl shadow-[0_18px_60px_rgba(0,0,0,0.35)]";
 
 export const GLASS_INPUT =
-    "h-12 w-full rounded-2xl border border-black bg-white backdrop-blur-2xl px-3 text-black placeholder:text-neutral-500 shadow-[inset_0_1px_0_rgba(0,0,0,0.12)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
+    "h-12 w-full rounded-2xl border-2 border-black bg-white backdrop-blur-2xl px-3 text-black placeholder:text-neutral-500 shadow-[inset_0_1px_0_rgba(0,0,0,0.12)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 
 export const CARD_GLASS =
-    "rounded-3xl border border-black bg-white backdrop-blur-2xl shadow-[0_18px_60px_rgba(0,0,0,0.30)]";
+    "rounded-3xl border-2 border-black bg-white backdrop-blur-2xl shadow-[0_18px_60px_rgba(0,0,0,0.30)]";
 
 export const INPUT_GLASS =
-    "w-full rounded-2xl border border-black bg-white px-4 py-3 text-black placeholder:text-neutral-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-black/40";
+    "w-full rounded-2xl border-2 border-black bg-white px-4 py-3 text-black placeholder:text-neutral-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-black/40";
