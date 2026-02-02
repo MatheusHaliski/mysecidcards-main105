@@ -6,7 +6,6 @@ import {
     collection,
     doc,
     getDocs,
-    getFirestore,
     orderBy,
     query,
     updateDoc,
@@ -14,56 +13,36 @@ import {
 import {firebaseAuthGate} from "../gate/firebaseClient";
 import {useAuthGate} from "@/app/gate/auth";
 import {getDb} from "@/app/gate/getDb";
-const firebaseApp= firebaseAuthGate();
+import {EmployeeRaw, normalizeEmployee, NormalizedEmployee} from "./UserAdapter";
+firebaseAuthGate();
 const hasFirebaseConfig = firebaseAuthGate();
 // ============================
 // ✅ Microsoft / Apple / LinkedIn tokens
 // ============================
-const PAGE_BG = "bg-[#f6f7fb]";
+const PAGE_BG = "bg-slate-50";
 const HEADER =
-    "rounded-3xl border border-slate-200 bg-white/80  shadow-[0_14px_40px_rgba(15,23,42,0.06)]";
+    "rounded-3xl border border-slate-200 bg-white";
 const CARD =
-    "rounded-2xl border border-slate-200/80 bg-white/85 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.06)]";
+    "rounded-2xl border border-slate-200/80 bg-white";
 const INPUT =
-    "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 placeholder:text-slate-400 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 placeholder:text-slate-400 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300";
 const PILL =
-    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm";
+    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700";
 const BTN =
-    "inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300";
 const BTN_PRIMARY =
-    "inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "inline-flex h-11 items-center justify-center rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300";
 const BADGE =
-    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50";
+    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-700 transition hover:bg-slate-50";
 const BADGE_INFO =
     "inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-800";
 // Dropdown UX fix: keep it ABOVE everything and never clipped by parent
 const DROPDOWN =
-    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999]  rounded-2xl border border-slate-200 bg-white shadow-2xl";
+    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999] rounded-2xl border border-slate-200 bg-white";
 const DROPDOWN_ITEM =
     "flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-slate-900 transition hover:bg-slate-50";
 
 const db = getDb();
-
-// ============================
-// ✅ Firestore schema (employees)
-// ============================
-type Employee = {
-    id: string;
-
-    cargo?: string;
-    celular?: string;
-    displayName?: string;
-    email?: string;
-    favorito?: boolean;
-    funcao?: string;
-    nome?: string;
-    projetos?: string;
-    ramal?: string;
-    regional?: string;
-    uuid?: string;
-};
-
-
 
 function normalizeKey(value: string) {
     return String(value ?? "")
@@ -72,20 +51,15 @@ function normalizeKey(value: string) {
         .replace(/\s+/g, " ");
 }
 
-function safeStr(v: unknown) {
-    return typeof v === "string" ? v.trim() : "";
-}
-
-
 async function getEmployees(installId: string) {
     if (!db) throw new Error("Firestore not initialized");
     if (!installId) throw new Error("Missing installId");
 
-    const colRef = collection(db, "installids", "3436985B-C01A-4318-9345-9C92316F3101", "employees");
+    const colRef = collection(db, "installids", installId, "employees");
     const q = query(colRef, orderBy("nome", "asc"));
     const snap = await getDocs(q);
 
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data()) })) as Employee[];
+    return snap.docs.map((d) => ({ id: d.id, ...(d.data()) })) as EmployeeRaw[];
 }
 
 // --------------------
@@ -238,9 +212,13 @@ function SearchSelect<T extends string>({
     );
 }
 export default function RestaurantCardsInner(): JSX.Element | null {
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    const [employees, setEmployees] = useState<EmployeeRaw[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [projectModal, setProjectModal] = useState<{
+        name: string;
+        projects: string[];
+    } | null>(null);
 
     // Filters
     const [nameQuery, setNameQuery] = useState("");
@@ -259,39 +237,25 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
 
     // ✅ Normalize employees
-    const normalized = useMemo(() => {
-        return employees.map((e) => {
-            const name = safeStr(e.nome) || safeStr(e.displayName) || "";
-            return {
-                ...e,
-                _name: name,
-                _cargo: safeStr(e.cargo),
-                _funcao: safeStr(e.funcao),
-                _regional: safeStr(e.regional),
-                _email: safeStr(e.email),
-                _celular: safeStr(e.celular),
-                _ramal: safeStr(e.ramal),
-                _projetos: safeStr(e.projetos),
-                _fav: Boolean(e.favorito),
-            };
-        });
+    const normalized = useMemo<NormalizedEmployee[]>(() => {
+        return employees.map((employee) => normalizeEmployee(employee));
     }, [employees]);
 
     const availableCargos = useMemo(() => {
         const s = new Set<string>();
-        normalized.forEach((e) => e._cargo && s.add(e._cargo));
+        normalized.forEach((e) => e.cargoNormalized && s.add(e.cargoNormalized));
         return Array.from(s).sort((a, b) => a.localeCompare(b));
     }, [normalized]);
 
     const availableFuncoes = useMemo(() => {
         const s = new Set<string>();
-        normalized.forEach((e) => e._funcao && s.add(e._funcao));
+        normalized.forEach((e) => e.funcaoNormalized && s.add(e.funcaoNormalized));
         return Array.from(s).sort((a, b) => a.localeCompare(b));
     }, [normalized]);
 
     const availableRegionais = useMemo(() => {
         const s = new Set<string>();
-        normalized.forEach((e) => e._regional && s.add(e._regional));
+        normalized.forEach((e) => e.regionalNormalized && s.add(e.regionalNormalized));
         return Array.from(s).sort((a, b) => a.localeCompare(b));
     }, [normalized]);
 
@@ -303,22 +267,28 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
         return normalized
             .filter((e) => {
-                const matchesName = q ? e._name.toLowerCase().includes(q) : true;
-                const matchesCargo = cargoKey ? normalizeKey(e._cargo) === cargoKey : true;
-                const matchesFuncao = funcaoKey ? normalizeKey(e._funcao) === funcaoKey : true;
-                const matchesRegional = regionalKey ? normalizeKey(e._regional) === regionalKey : true;
-                const matchesFav = onlyFavorites ? e._fav : true;
+                const matchesName = q ? e.name.toLowerCase().includes(q) : true;
+                const matchesCargo = cargoKey
+                    ? normalizeKey(e.cargoNormalized) === cargoKey
+                    : true;
+                const matchesFuncao = funcaoKey
+                    ? normalizeKey(e.funcaoNormalized) === funcaoKey
+                    : true;
+                const matchesRegional = regionalKey
+                    ? normalizeKey(e.regionalNormalized) === regionalKey
+                    : true;
+                const matchesFav = onlyFavorites ? e.favorite : true;
                 return matchesName && matchesCargo && matchesFuncao && matchesRegional && matchesFav;
             })
             .sort(
                 (a, b) =>
-                    (b._fav ? 1 : 0) - (a._fav ? 1 : 0) || a._name.localeCompare(b._name)
+                    (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.name.localeCompare(b.name)
             );
     }, [normalized, nameQuery, cargo, funcao, regional, onlyFavorites]);
 
     const total = normalized.length;
     const shown = filteredEmployees.length;
-    const favCount = useMemo(() => normalized.filter((e) => e._fav).length, [normalized]);
+    const favCount = useMemo(() => normalized.filter((e) => e.favorite).length, [normalized]);
 
     // ✅ Load employees (NUNCA JSX aqui)
     useEffect(() => {
@@ -454,7 +424,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 type="text"
                                 value={nameQuery}
                                 onChange={(e) => setNameQuery(e.target.value)}
-                                placeholder="Search by name…"
+                                placeholder="Nome"
                                 className={INPUT}
                             />
 
@@ -462,10 +432,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 value={cargo}
                                 options={availableCargos as string[]}
                                 onChange={setCargo}
-                                placeholder="All cargos"
-                                allLabel="All cargos"
+                                placeholder="Cargo"
+                                allLabel="Cargo"
                                 includeAllOption
-                                searchPlaceholder="Search cargo…"
+                                searchPlaceholder="Buscar cargo…"
                                 getOptionLabel={(opt) => opt}
                                 disabled={!availableCargos.length}
                             />
@@ -474,10 +444,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 value={funcao}
                                 options={availableFuncoes as string[]}
                                 onChange={setFuncao}
-                                placeholder="All functions"
-                                allLabel="All functions"
+                                placeholder="Função"
+                                allLabel="Função"
                                 includeAllOption
-                                searchPlaceholder="Search function…"
+                                searchPlaceholder="Buscar função…"
                                 getOptionLabel={(opt) => opt}
                                 disabled={!availableFuncoes.length}
                             />
@@ -486,10 +456,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 value={regional}
                                 options={availableRegionais as string[]}
                                 onChange={setRegional}
-                                placeholder="All regionals"
-                                allLabel="All regionals"
+                                placeholder="Regional"
+                                allLabel="Regional"
                                 includeAllOption
-                                searchPlaceholder="Search regional…"
+                                searchPlaceholder="Buscar regional…"
                                 getOptionLabel={(opt) => opt}
                                 disabled={!availableRegionais.length}
                             />
@@ -500,7 +470,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 className={`${BTN} justify-center`}
                                 aria-pressed={onlyFavorites}
                             >
-                                {onlyFavorites ? "★ Favorites" : "☆ Favorites"}
+                                {onlyFavorites ? "★ Favoritos" : "☆ Favoritos"}
                             </button>
 
                             <button
@@ -539,22 +509,19 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-8">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-8">
                         {filteredEmployees.map((emp) => {
-                            const name = emp._name || "Sem nome";
-                            const titleLine =
-                                [emp._cargo, emp._funcao].filter(Boolean).join(" • ") || "—";
-                            const hasContacts = Boolean(emp._email || emp._celular || emp._ramal);
-                            const metaLine = emp._regional ? `📍 ${emp._regional}` : "";
-                            const fav = Boolean(emp._fav);
+                            const name = emp.name || "Sem nome";
+                            const hasContacts = Boolean(
+                                emp.emailNormalized || emp.celularNormalized || emp.ramalNormalized
+                            );
+                            const fav = Boolean(emp.favorite);
 
                             return (
                                 <article
                                     key={emp.id}
-                                    className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-white`}
+                                    className={`${CARD} group relative p-6 min-h-[460px] min-w-[420px] transition hover:-translate-y-0.5 hover:bg-white`}
                                 >
-
-                                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/35 to-transparent" />
 
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="min-w-0">
@@ -564,22 +531,22 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                                 </h3>
                                             </div>
 
-                                            <div className="mt-2 flex flex-wrap gap-2 -translate-y-[-20px]">
-                                                {emp._cargo ? (
+                                            <div className="mt-3 flex flex-wrap gap-2">
+                                                {emp.cargoNormalized ? (
                                                     <span className={BADGE}>
-      💼 <span className="truncate">Cargo: {emp._cargo}</span>
+      💼 <span className="truncate">Cargo: {emp.cargoNormalized}</span>
     </span>
                                                 ) : null}
 
-                                                {emp._funcao ? (
+                                                {emp.funcaoNormalized ? (
                                                     <span className={BADGE}>
-      🧩 <span className="truncate">Função: {emp._funcao}</span>
+      🧩 <span className="truncate">Função: {emp.funcaoNormalized}</span>
     </span>
                                                 ) : null}
 
-                                                {emp._regional ? (
+                                                {emp.regionalNormalized ? (
                                                     <span className={BADGE}>
-      📍 <span className="truncate">Regional: {emp._regional}</span>
+      📍 <span className="truncate">Regional: {emp.regionalNormalized}</span>
     </span>
                                                 ) : null}
                                             </div>
@@ -592,9 +559,9 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                             aria-label={fav ? "Unfavorite" : "Favorite"}
                                             className={[
                                                 "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
-                                                "border border-slate-300 bg-white shadow-sm",
+                                                "border border-slate-300 bg-white",
                                                 "transition hover:bg-slate-50 active:scale-[0.98]",
-                                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60",
+                                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300",
                                             ].join(" ")}
                                             title={fav ? "Unfavorite" : "Favorite"}
                                         >
@@ -604,32 +571,41 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                         </button>
                                     </div>
 
-                                    {emp._projetos ? (
-                                        <div className="mt-3 flex flex-wrap gap-2">
-    <span className={BADGE_INFO}>
-      📌 <span className="truncate">{emp._projetos}</span>
-    </span>
+                                    {emp.projectsNormalized.length ? (
+                                        <div className="mt-4 flex flex-wrap gap-2">
+                                            <button
+                                                type="button"
+                                                className={BADGE_INFO}
+                                                onClick={() =>
+                                                    setProjectModal({
+                                                        name,
+                                                        projects: emp.projectsNormalized,
+                                                    })
+                                                }
+                                            >
+                                                📌 <span className="truncate">Projetos em andamento</span>
+                                            </button>
                                         </div>
                                     ) : null}
 
 
                                     {hasContacts ? (
-                                        <div className="mt-4 translate-y-4.5 flex flex-wrap gap-3">
-                                            {emp._email ? (
+                                        <div className="mt-5 flex flex-wrap gap-3">
+                                            {emp.emailNormalized ? (
                                                 <span className={BADGE_INFO}>
-        ✉️ <span className="truncate">E-mail: {emp._email}</span>
+        ✉️ <span className="truncate">E-mail: {emp.emailNormalized}</span>
       </span>
                                             ) : null}
 
-                                            {emp._celular ? (
+                                            {emp.celularNormalized ? (
                                                 <span className={BADGE_INFO}>
-        📱 <span className="truncate">Celular: {emp._celular}</span>
+        📱 <span className="truncate">Celular: {emp.celularNormalized}</span>
       </span>
                                             ) : null}
 
-                                            {emp._ramal ? (
+                                            {emp.ramalNormalized ? (
                                                 <span className={BADGE_INFO}>
-        ☎️ <span className="truncate">Ramal: {emp._ramal}</span>
+        ☎️ <span className="truncate">Ramal: {emp.ramalNormalized}</span>
       </span>
                                             ) : null}
                                         </div>
@@ -646,8 +622,46 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                         })}
                     </div>
                 </section>
+                {projectModal ? (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
+                        <button
+                            type="button"
+                            aria-label="Close projects modal"
+                            onClick={() => setProjectModal(null)}
+                            className="absolute inset-0 bg-slate-900/40"
+                        />
+                        <div className="relative w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-lg">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <h4 className="text-lg font-semibold text-slate-900">
+                                        Projetos em andamento
+                                    </h4>
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        {projectModal.name}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setProjectModal(null)}
+                                    className={BTN}
+                                >
+                                    Fechar
+                                </button>
+                            </div>
+                            <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                                {projectModal.projects.map((project, index) => (
+                                    <li
+                                        key={`${project}-${index}`}
+                                        className="rounded-xl border border-slate-200 px-3 py-2"
+                                    >
+                                        {project}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                ) : null}
             </div>
         </div>
     );
 }
-
