@@ -17,6 +17,7 @@ import {useAuthGate} from "@/app/gate/auth";
 import {getDb} from "@/app/gate/getDb";
 import {SearchSelect} from "@/app/restaurantcardspage/selectelement";
 import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
+import {adaptUser, AuthUser, getUserDisplayName, getUserEmail, getUserPhotoUrl} from "@/app/gate/AuthAdapter";
 const firebaseApp= firebaseAuthGate();
 const hasFirebaseConfig = firebaseAuthGate();
 // ============================
@@ -113,7 +114,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
     const [authError, setAuthError] = useState("");
     const [projectModal, setProjectModal] = useState<{
         name: string;
-        projects: string[];
+        projetos: string[];
     } | null>(null);
     const authReady = useAuthGate();
     const pinCheckReady = useAuthGate();
@@ -123,10 +124,11 @@ export default function RestaurantCardsInner(): JSX.Element | null {
     const router = useRouter();
 
 
-    // ✅ Normalize employees
     const normalized = useMemo(() => {
         return employees.map((e) => {
             const name = safeStr(e.nome) || safeStr(e.displayName) || "";
+            const projetosList = splitAndNormalizeProjects(e.projetos);
+
             return {
                 ...e,
                 _name: name,
@@ -136,12 +138,17 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                 _email: safeStr(e.email),
                 _celular: safeStr(e.celular),
                 _ramal: safeStr(e.ramal),
-                _projetos: safeStr(e.projetos),
+
+                // ✅ aqui: lista e também string normalizada
+                _projetosList: projetosList,
+                _projetosNorm: projetosList.join("; "),
+
                 _photoUrl: safeStr(e.photoURL),
                 _fav: Boolean(e.favorito),
             };
         });
     }, [employees]);
+
 
     const availableCargos = useMemo(() => {
         const s = new Set<string>();
@@ -160,6 +167,43 @@ export default function RestaurantCardsInner(): JSX.Element | null {
         normalized.forEach((e) => e._regional && s.add(e._regional));
         return Array.from(s).sort((a, b) => a.localeCompare(b));
     }, [normalized]);
+    function normalizeSpaces(s: string) {
+        return s.trim().replace(/\s+/g, " ");
+    }
+
+    function normalizeProjectName(raw: string) {
+        // Ajustes opcionais (use só o que fizer sentido pro seu dado)
+        let s = normalizeSpaces(raw);
+
+        // Normaliza hífens (ex: "Projeto - X" -> "Projeto - X" consistente)
+        s = s.replace(/\s*-\s*/g, " - ");
+
+        // Remove pontuação repetida no fim (ex: "Projeto X;" -> "Projeto X")
+        s = s.replace(/[;,.]+$/g, "");
+
+        return s;
+    }
+
+    function splitAndNormalizeProjects(value: unknown): string[] {
+        const str = typeof value === "string" ? value : "";
+        const parts = str
+            .split(/[,;\n]+/)                 // vírgula, ponto-e-vírgula, quebras de linha
+            .map((p) => normalizeProjectName(p))
+            .filter(Boolean);
+
+        // remove duplicados (case-insensitive)
+        const seen = new Set<string>();
+        const unique: string[] = [];
+        for (const p of parts) {
+            const key = p.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                unique.push(p);
+            }
+        }
+        return unique;
+    }
+
 
     const filteredEmployees = useMemo(() => {
         const q = nameQuery.trim().toLowerCase();
@@ -510,17 +554,17 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                                 </button>
                                             </div>
 
-                                            {emp._projetos ? (
+                                            {emp._projetosList ? (
                                                 <div className="mt-3 flex flex-wrap gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => {
-                                                            const projects = splitProjects(emp._projetos);
                                                             setProjectModal({
                                                                 name,
-                                                                projects: projects.length ? projects : [emp._projetos],
+                                                                projetos: emp._projetosList.length ? emp._projetosList : ["(sem projetos)"],
                                                             });
                                                         }}
+
                                                         className={[
                                                             "inline-flex items-center gap-2 rounded-full border-2 border-black",
                                                             "bg-white px-3 py-2 text-sm font-semibold text-black shadow-sm",
@@ -588,7 +632,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                             </button>
                         </div>
                         <ul className="mt-4 space-y-2 text-sm text-black">
-                            {projectModal.projects.map((project) => (
+                            {projectModal.projetos.map((project) => (
                                 <li
                                     key={`${projectModal.name}-${project}`}
                                     className="rounded-2xl border-2 border-black bg-white px-4 py-2 shadow-sm"
