@@ -27,28 +27,28 @@ const hasFirebaseConfig = firebaseAuthGate();
 // ============================
 // ✅ Microsoft / Apple / LinkedIn tokens
 // ============================
-const PAGE_BG = "bg-[#f6f7fb]";
+const PAGE_BG = "bg-[#ccd99c]";
 const HEADER =
-    "rounded-3xl border border-slate-200 bg-white/80  shadow-[0_14px_40px_rgba(15,23,42,0.06)]";
+    "rounded-3xl border-2 border-black bg-white shadow-[0_14px_40px_rgba(0,0,0,0.18)] text-black";
 const CARD =
-    "rounded-3xl border-2xl border-black-200 bg-white/85 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.06)]";
+    "rounded-3xl border-2 border-black bg-white backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.18)] text-black";
 const INPUT =
-    "h-11 w-full rounded-xl border border-black-200 bg-white px-3 text-slate-900 placeholder:text-slate-400 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "h-12 w-full rounded-xl border-2 border-black bg-white px-3 text-black placeholder:text-neutral-500 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const PILL =
-    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm";
 const BTN =
-    "inline-flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "inline-flex h-12 items-center justify-center rounded-xl border-2 border-black bg-white px-4 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const BTN_PRIMARY =
-    "inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "inline-flex h-12 items-center justify-center rounded-xl border-2 border-black bg-black px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-neutral-900 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40";
 const BADGE =
-    "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100";
 const BADGE_INFO =
-    "inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-800";
+    "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-medium text-black";
 // Dropdown UX fix: keep it ABOVE everything and never clipped by parent
 const DROPDOWN =
-    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999]  rounded-2xl border border-slate-200 bg-white shadow-2xl";
+    "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999] rounded-2xl border-2 border-black bg-white shadow-2xl";
 const DROPDOWN_ITEM =
-    "flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-slate-900 transition hover:bg-slate-50";
+    "flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-black transition hover:bg-neutral-100";
 
 const db = getDb();
 
@@ -259,7 +259,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
     // ✅ Gate (RETURNS aqui, nunca dentro de useEffect)
     if (!authReady || !pinCheckReady) {
         return (
-            <div className={`flex min-h-screen items-center justify-center ${PAGE_BG} px-6 text-sm text-slate-600`}>
+            <div className={`flex min-h-screen items-center justify-center ${PAGE_BG} px-6 text-sm text-neutral-200`}>
                 Checking access...
             </div>
         );
@@ -269,7 +269,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
     // ✅ RETURN FINAL (obrigatório)
     return (
         <div className={`min-h-screen w-full ${PAGE_BG}`}>
-            <div className="mx-auto max-w-6xl px-4 py-7 font-sans text-slate-900 sm:px-6">
+            <div className="mx-auto max-w-6xl px-4 py-7 font-sans text-black sm:px-6">
                 <header className={`${HEADER}  px-6 py-5`}>
                     <div className="flex flex-wrap items-start justify-between gap-8">
                         <div className="min-w-[240px]">
@@ -278,16 +278,16 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
                             <div className="mt-3 flex flex-wrap gap-2">
                 <span className={PILL}>
-                  <span className="text-slate-500">Total</span>
-                  <span className="font-bold text-slate-900">{total}</span>
+                  <span className="text-neutral-600">Total</span>
+                  <span className="font-bold text-black">{total}</span>
                 </span>
                                 <span className={PILL}>
-                  <span className="text-slate-500">Showing</span>
-                  <span className="font-bold text-slate-900">{shown}</span>
+                  <span className="text-neutral-600">Showing</span>
+                  <span className="font-bold text-black">{shown}</span>
                 </span>
                                 <span className={PILL}>
-                  <span className="text-slate-500">Favorites</span>
-                  <span className="font-bold text-slate-900">{favCount}</span>
+                  <span className="text-neutral-600">Favorites</span>
+                  <span className="font-bold text-black">{favCount}</span>
                 </span>
                             </div>
                         </div>
@@ -298,10 +298,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                     <img
                                         src={getUserPhotoUrl(user)}
                                         alt={`${getUserDisplayName(user) ||getUserEmail(user) || "User"} profile`}
-                                        className="h-10 w-10 rounded-2xl border border-slate-200 object-cover"
+                                        className="h-10 w-10 rounded-2xl border-2 border-black object-cover"
                                     />
                                 ) : (
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-600">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl border-2 border-black bg-white text-sm font-bold text-black">
                                         U
                                     </div>
                                 )}
@@ -311,7 +311,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 {user?.displayName || user?.email || "Guest"}
                             </div>
 
-                            {authError && <div className="mt-1 text-xs text-amber-700">{authError}</div>}
+                            {authError && <div className="mt-1 text-xs text-black">{authError}</div>}
 
                             <div className="mt-3 flex items-center justify-end gap-2">
                                 <button
@@ -328,10 +328,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                         </div>
                     </div>
 
-                    <div className="mt-5 h-px w-full bg-white" />
+                    <div className="mt-5 h-px w-full bg-black" />
 
-                    <div className="relative mt-4">
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
+                    <div className="relative mt-4 space-y-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                             <input
                                 type="text"
                                 value={nameQuery}
@@ -340,6 +340,22 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                 className={INPUT}
                             />
 
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setNameQuery("");
+                                    setCargo("");
+                                    setFuncao("");
+                                    setRegional("");
+                                    setOnlyFavorites(false);
+                                }}
+                                className={BTN_PRIMARY}
+                            >
+                                Clear
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
                             <SearchSelect
                                 value={cargo}
                                 options={availableCargos as string[]}
@@ -384,39 +400,25 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                             >
                                 {onlyFavorites ? "★ Favorites" : "☆ Favorites"}
                             </button>
-
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setNameQuery("");
-                                    setCargo("");
-                                    setFuncao("");
-                                    setRegional("");
-                                    setOnlyFavorites(false);
-                                }}
-                                className={BTN_PRIMARY}
-                            >
-                                Clear
-                            </button>
                         </div>
                     </div>
                 </header>
 
                 <section className="mt-6">
                     {loading && (
-                        <div className={`${CARD} px-5 py-4 text-sm text-slate-600`}>
+                        <div className={`${CARD} px-5 py-4 text-sm text-black`}>
                             Loading employees…
                         </div>
                     )}
 
                     {!loading && error && (
-                        <div className="whitespace-pre-wrap rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-700">
+                        <div className="whitespace-pre-wrap rounded-2xl border-2 border-black bg-white px-5 py-4 text-sm font-semibold text-black">
                             {error}
                         </div>
                     )}
 
                     {!loading && !error && filteredEmployees.length === 0 && (
-                        <div className={`${CARD} px-5 py-4 text-sm text-slate-600`}>
+                        <div className={`${CARD} px-5 py-4 text-sm text-black`}>
                             No employees match your filters.
                         </div>
                     )}
@@ -433,15 +435,15 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                             return (
                                 <article
                                     key={emp.id}
-                                    className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-teal-500`}
+                                    className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-neutral-100`}
                                 >
 
-                                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/35 to-transparent" />
+                                    <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-black/40 to-transparent" />
 
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <h3 className="break-words text-xl font-semibold text-slate-900 leading-snug">
+                                                <h3 className="break-words text-xl font-semibold text-black leading-snug">
                                                     {name}
                                                 </h3>
                                             </div>
@@ -474,13 +476,13 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                             aria-label={fav ? "Unfavorite" : "Favorite"}
                                             className={[
                                                 "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
-                                                "border border-slate-300 bg-white shadow-sm",
-                                                "transition hover:bg-slate-50 active:scale-[0.98]",
-                                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60",
+                                                "border-2 border-black bg-white shadow-sm",
+                                                "transition hover:bg-neutral-100 active:scale-[0.98]",
+                                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
                                             ].join(" ")}
                                             title={fav ? "Unfavorite" : "Favorite"}
                                         >
-      <span className={fav ? "text-amber-500 text-2xl" : "text-slate-500 text-2xl"}>
+      <span className={fav ? "text-black text-2xl" : "text-neutral-500 text-2xl"}>
         {fav ? "★" : "☆"}
       </span>
                                         </button>
@@ -516,7 +518,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                             ) : null}
                                         </div>
                                     ) : (
-                                        <div className="mt-3 text-base text-slate-500">
+                                        <div className="mt-3 text-base text-neutral-600">
 
                                         </div>
                                     )}
@@ -532,4 +534,3 @@ export default function RestaurantCardsInner(): JSX.Element | null {
         </div>
     );
 }
-

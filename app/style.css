@@ -7,10 +7,17 @@
 
 :root {
     --font-tech: var(--font-sharetech);
+    --glass-border-width: 2px;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: #000000;
+    --glass-blur: blur(8px);
+    --glass-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
 }
 
 body {
     font-family: var(--font-tech), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    background-color: #ccd99c;
+    color: #0a0a0a;
 }
 
 ul {
@@ -54,7 +61,7 @@ dialog {
     }
 
     &::backdrop {
-        background-color: #f6f7f9;
+        background-color: #ffffff;
         opacity: 0.8;
     }
 }
@@ -70,7 +77,7 @@ footer {
         text-transform: uppercase;
         font-size: 1rem;
         outline: 0;
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         padding: 10px;
         cursor: pointer;
         background: var(--glass-bg);
@@ -78,13 +85,13 @@ footer {
     }
 
     & .button--cancel {
-        color: rgb(71 85 105);
+        color: #000000;
         border-radius: 3px;
     }
 
     & .button--confirm {
         background-color: rgb(255 255 255 / 60%);
-        color: #0f172a;
+        color: #000000;
         border-radius: 3px;
     }
 
@@ -97,8 +104,9 @@ footer {
 }
 
 header {
-    background-color: rgb(56 85 116);
-    color: white;
+    background-color: #ffffff;
+    color: #000000;
+    border-bottom: 2px solid #000000;
     display: flex;
     justify-content: space-between;
     padding: 0.8rem;
@@ -115,11 +123,11 @@ header {
     }
     & a {
         text-decoration: none;
-        color: white;
+        color: #000000;
     }
     .profileImage {
         border-radius: 100%;
-        border-color: white;
+        border-color: #000000;
         border-width: 2px;
         border-style: solid;
         margin-right: 10px;
@@ -134,7 +142,7 @@ header {
         margin-inline-end: 10px;
     }
 
-    color: white;
+    color: #000000;
     text-decoration: none;
     font-size: 1.25rem;
     font-weight: 500;
@@ -150,13 +158,14 @@ header {
 .menu ul {
     /* display: block; */
     left: calc(-220px * 0.9);
-    color: rgb(42 72 101);
-    background-color: white;
-    box-shadow: 0 0 10px 0 rgb(0 0 0 / 50%);
+    color: #000000;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    box-shadow: 0 0 10px 0 rgb(0 0 0 / 25%);
 
     & li {
         padding: 10px;
-        border-bottom: 1px solid rgb(42 72 101 / 0.25);
+        border-bottom: 2px solid #000000;
     }
 
     & a {
@@ -165,7 +174,7 @@ header {
     }
 
     & li:has(a):hover {
-        background-color: rgb(42 72 101 / 0.05);
+        background-color: rgb(0 0 0 / 0.05);
     }
 
     & a:visited {
@@ -194,18 +203,21 @@ header {
 }
 
 .main__home {
-    background-color: #f8fafc;
+    background-color: #ffffff;
+    border-top: 2px solid #000000;
     min-height: 100vh;
 }
 
 .main__restaurant {
-    background-color: #f8fafc;
+    background-color: #ffffff;
+    border-top: 2px solid #000000;
     min-height: 90vh;
 }
 
 article {
     margin: 0 auto;
-    background-color: #f8fafc;
+    background-color: #ffffff;
+    border: 2px solid #000000;
     padding: 20px 40px;
 }
 
@@ -222,7 +234,7 @@ article {
 
     & li {
         background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         backdrop-filter: var(--glass-blur);
         box-shadow: var(--glass-shadow);
         max-width: 300px;
@@ -310,7 +322,7 @@ a {
     grid-template-columns: 1fr;
     gap: 24px;
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
 }
 
@@ -335,7 +347,7 @@ a {
     align-items: center;
     gap: 8px;
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     border-radius: 999px;
     padding: 10px 14px;
@@ -373,8 +385,8 @@ a {
 }
 
 .hero__price {
-    background: #111827;
-    color: white;
+    background: #000000;
+    color: #ffffff;
     border-radius: 999px;
     padding: 6px 12px;
     font-weight: 700;
@@ -390,7 +402,7 @@ a {
 
 .hero__chip {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     color: #1f2937;
     padding: 6px 10px;
     border-radius: 999px;
@@ -407,7 +419,7 @@ a {
 
 .hero__fact-card {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 12px;
     padding: 12px;
     backdrop-filter: var(--glass-blur);
@@ -434,7 +446,7 @@ a {
 
 .segment {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 16px;
     padding: 16px;
     backdrop-filter: var(--glass-blur);
@@ -455,7 +467,7 @@ a {
 
 .segment__grid-item {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 12px;
     padding: 10px 12px;
     backdrop-filter: var(--glass-blur);
@@ -492,7 +504,7 @@ a {
 }
 
 .review-form__container {
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 16px;
     padding: 20px;
     background: var(--glass-bg);
@@ -523,7 +535,7 @@ a {
 .review-form textarea {
     min-height: 120px;
     border-radius: 12px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     background: rgb(255 255 255 / 75%);
     backdrop-filter: var(--glass-blur);
     padding: 12px;
@@ -533,11 +545,11 @@ a {
 .review-form button {
     align-self: flex-start;
     background: rgb(255 255 255 / 45%);
-    color: #0f172a;
+    color: #000000;
     font-weight: 700;
     padding: 10px 16px;
     border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     cursor: pointer;
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
@@ -576,7 +588,7 @@ a {
     background: var(--glass-bg);
     border-radius: 20px;
     overflow: hidden;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
     display: grid;
@@ -601,7 +613,7 @@ a {
     bottom: 12px;
     right: 12px;
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     border-radius: 999px;
     padding: 10px 14px;
@@ -651,17 +663,18 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #eff6ff;
-    color: #1d4ed8;
+    background: #ffffff;
+    color: #000000;
     padding: 6px 10px;
     border-radius: 999px;
     font-size: 0.9rem;
     font-weight: 600;
+    border: 2px solid #000000;
 }
 
 .pill--muted {
-    background: #f3f4f6;
-    color: #374151;
+    background: #ffffff;
+    color: #000000;
 }
 
 .restaurant-header__tags {
@@ -681,14 +694,14 @@ a {
 .location-chip {
     display: inline-flex;
     align-items: center;
-    background: #e0f2fe;
-    color: #0f172a;
+    background: #ffffff;
+    color: #000000;
     padding: 10px 14px;
     border-radius: 22px;
     font-size: 1rem;
     font-weight: 700;
 
-    border: 4px solid #0c4a6e;
+    border: 4px solid #000000;
 }
 
 
@@ -704,7 +717,7 @@ a {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 8px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 60%);
 }
@@ -735,7 +748,7 @@ a {
     background: var(--glass-bg);
     border-radius: 16px;
     padding: 18px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
 }
@@ -748,7 +761,7 @@ a {
 
 .panel-card {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 12px;
     padding: 14px 16px;
     display: flex;
@@ -804,7 +817,7 @@ a {
     background: var(--glass-bg);
     border-radius: 16px;
     padding: 20px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
     display: flex;
@@ -821,11 +834,12 @@ a {
 }
 
 .commentary__count {
-    background: #eef2ff;
-    color: #3730a3;
+    background: #ffffff;
+    color: #000000;
     padding: 6px 10px;
     border-radius: 999px;
     font-weight: 700;
+    border: 2px solid #000000;
 }
 
 .eyebrow {
@@ -851,7 +865,7 @@ a {
 }
 
 .commentary__item {
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 12px;
     padding: 12px 14px;
     background: var(--glass-bg);
@@ -878,7 +892,7 @@ a {
 
 .commentary__form .review-form {
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 12px;
     padding: 12px;
     backdrop-filter: var(--glass-blur);
@@ -896,14 +910,14 @@ a {
     border-radius: 50%;
     object-fit: cover;
     margin-right: 12px;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #000000;
 }
 
 .commentary select,
 .commentary textarea {
     width: 100%;
     border-radius: 10px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     padding: 10px;
     font-size: 1rem;
     background: rgb(255 255 255 / 75%);
@@ -917,8 +931,8 @@ a {
 
 .commentary button {
     background: rgb(255 255 255 / 45%);
-    color: #0f172a;
-    border: 1px solid var(--glass-border);
+    color: #000000;
+    border: var(--glass-border-width) solid var(--glass-border);
     border-radius: 10px;
     padding: 10px 16px;
     font-weight: 700;
@@ -955,7 +969,7 @@ a {
     width: 48px;
     height: 48px;
     border-radius: 9999px;
-    background: linear-gradient(135deg, #1f2937, #2563eb);
+    background: linear-gradient(135deg, #000000, #9ca3af);
     color: #f9fafb;
     display: inline-flex;
     align-items: center;
@@ -1026,7 +1040,7 @@ a {
                 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         cursor: pointer;
         background-color: rgb(255 255 255 / 60%);
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         backdrop-filter: var(--glass-blur);
         border-radius: 0.75rem;
         box-shadow:
@@ -1044,7 +1058,7 @@ a {
                 var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
                 var(--tw-shadow);
         background-color: rgb(255 255 255 / 60%);
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         backdrop-filter: var(--glass-blur);
         border-radius: 9999px;
         cursor: pointer;
@@ -1063,7 +1077,7 @@ a {
 #review {
     padding: 20px;
     font-size: 17px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     width: 100%;
     border-radius: 12px;
     background: rgb(255 255 255 / 75%);
@@ -1097,14 +1111,14 @@ a {
     border-radius: 16px;
     padding: 24px;
     margin-top: 16px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
 }
 
 .commentary__latest {
     margin-top: 32px;
-    border-top: 1px solid #eee;
+    border-top: 2px solid #000000;
     padding-top: 24px;
 }
 
@@ -1116,7 +1130,7 @@ a {
 
 .commentary__item {
     padding: 16px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 2px solid #000000;
 }
 
 .commentary__item:last-child {
@@ -1145,7 +1159,7 @@ a {
 .view-all-btn {
     margin-top: 16px;
     background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     color: #1d4ed8;
     font-weight: 600;
     cursor: pointer;
@@ -1248,7 +1262,7 @@ a {
 .filter-menu {
     background-color: var(--glass-bg);
     border-radius: 3px;
-    border: 1px solid var(--glass-border);
+    border: var(--glass-border-width) solid var(--glass-border);
     backdrop-filter: var(--glass-blur);
     box-shadow: var(--glass-shadow);
 
@@ -1295,7 +1309,7 @@ a {
         padding-bottom: 0.5rem;
         padding-left: 0.625rem;
         padding-right: 0.625rem;
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         border-radius: 10px;
         background: rgb(255 255 255 / 75%);
         backdrop-filter: var(--glass-blur);
@@ -1309,7 +1323,7 @@ a {
     }
 
     & p:last-child {
-        color: rgb(42 72 101);
+        color: #000000;
         font-weight: 600;
         font-size: 0.875rem;
         line-height: 1.25rem;
@@ -1333,20 +1347,21 @@ a {
         padding-bottom: 0.25rem;
         padding-left: 0.5rem;
         padding-right: 0.5rem;
-        background-color: rgb(71 98 130);
+        background-color: #000000;
         border-radius: 9999px;
-        color: white;
+        color: #ffffff;
         font-size: 0.95rem;
+        border: 2px solid #000000;
     }
 
     & button {
         cursor: pointer;
         margin-left: 5px;
         padding: 2px 10px;
-        color: #0f172a;
+        color: #000000;
         background-color: rgb(255 255 255 / 45%);
         outline: none;
-        border: 1px solid var(--glass-border);
+        border: var(--glass-border-width) solid var(--glass-border);
         font-size: 0.8rem;
         border-radius: 999px;
         backdrop-filter: var(--glass-blur);
