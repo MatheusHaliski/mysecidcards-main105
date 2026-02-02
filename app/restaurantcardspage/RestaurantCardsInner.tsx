@@ -40,6 +40,8 @@ const BADGE =
     "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-100";
 const BADGE_INFO =
     "inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-medium text-black";
+const BADGE_INFO2 =
+    "inline-flex items-center gap-2 rounded-full border-2 - translate-x-20 border-black bg-white px-3 py-1 text-sm font-medium text-black";
 // Dropdown UX fix: keep it ABOVE everything and never clipped by parent
 const DROPDOWN =
     "absolute left-0 right-0 top-[calc(100%+10px)] z-[9999] rounded-2xl border-2 border-black bg-white shadow-2xl";
@@ -62,7 +64,7 @@ type Employee = {
     funcao?: string;
     nome?: string;
     photoURL?: string;
-    projetos?: string;
+    projetos?: string | string[];
     ramal?: string;
     regional?: string;
     uuid?: string;
@@ -139,15 +141,15 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                 _celular: safeStr(e.celular),
                 _ramal: safeStr(e.ramal),
 
-                // ✅ aqui: lista e também string normalizada
+                // ✅ agora funciona pra string e pra string[]
                 _projetosList: projetosList,
-                _projetosNorm: projetosList.join("; "),
 
                 _photoUrl: safeStr(e.photoURL),
                 _fav: Boolean(e.favorito),
             };
         });
     }, [employees]);
+
 
 
     const availableCargos = useMemo(() => {
@@ -167,37 +169,36 @@ export default function RestaurantCardsInner(): JSX.Element | null {
         normalized.forEach((e) => e._regional && s.add(e._regional));
         return Array.from(s).sort((a, b) => a.localeCompare(b));
     }, [normalized]);
+
+
     function normalizeSpaces(s: string) {
         return s.trim().replace(/\s+/g, " ");
     }
 
     function normalizeProjectName(raw: string) {
-        // Ajustes opcionais (use só o que fizer sentido pro seu dado)
         let s = normalizeSpaces(raw);
-
-        // Normaliza hífens (ex: "Projeto - X" -> "Projeto - X" consistente)
         s = s.replace(/\s*-\s*/g, " - ");
-
-        // Remove pontuação repetida no fim (ex: "Projeto X;" -> "Projeto X")
         s = s.replace(/[;,.]+$/g, "");
-
         return s;
     }
 
     function splitAndNormalizeProjects(value: unknown): string[] {
-        const str = typeof value === "string" ? value : "";
-        const parts = str
-            .split(/[,;\n]+/)                 // vírgula, ponto-e-vírgula, quebras de linha
+        const rawList: string[] =
+            Array.isArray(value) ? value.filter((x) => typeof x === "string") :
+                typeof value === "string" ? value.split(/[,;\n]+/) :
+                    [];
+
+        const cleaned = rawList
             .map((p) => normalizeProjectName(p))
             .filter(Boolean);
 
-        // remove duplicados (case-insensitive)
+        // dedupe case-insensitive
         const seen = new Set<string>();
         const unique: string[] = [];
-        for (const p of parts) {
-            const key = p.toLowerCase();
-            if (!seen.has(key)) {
-                seen.add(key);
+        for (const p of cleaned) {
+            const k = p.toLowerCase();
+            if (!seen.has(k)) {
+                seen.add(k);
                 unique.push(p);
             }
         }
@@ -554,28 +555,23 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                                                 </button>
                                             </div>
 
-                                            {emp._projetosList ? (
+                                            {emp._projetosList.length ? (
                                                 <div className="mt-3 flex flex-wrap gap-2">
                                                     <button
                                                         type="button"
                                                         onClick={() => {
                                                             setProjectModal({
                                                                 name,
-                                                                projetos: emp._projetosList.length ? emp._projetosList : ["(sem projetos)"],
+                                                                projetos: emp._projetosList,
                                                             });
                                                         }}
-
-                                                        className={[
-                                                            "inline-flex items-center gap-2 rounded-full border-2 border-black",
-                                                            "bg-white px-3 py-2 text-sm font-semibold text-black shadow-sm",
-                                                            "transition hover:bg-neutral-100 focus-visible:outline-none",
-                                                            "focus-visible:ring-2 focus-visible:ring-black/40",
-                                                        ].join(" ")}
+                                                        className={BADGE_INFO}
                                                     >
                                                         📌 <span className="truncate">Projetos</span>
                                                     </button>
                                                 </div>
                                             ) : null}
+
 
                                             {hasContacts ? (
                                                 <div className="mt-4 flex flex-wrap gap-3">
