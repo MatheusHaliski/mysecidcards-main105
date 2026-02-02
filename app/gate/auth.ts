@@ -1,21 +1,19 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {usePathname, useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { firebaseAuthGate } from "./firebaseClient";
 import {
   getAuth,
   GoogleAuthProvider,
-  onAuthStateChanged,
   setPersistence,
   browserLocalPersistence,
-  signInWithPopup,
   signInWithCredential,
-  signOut, type User,
 } from "firebase/auth";
 import {
   clearDevSessionToken,
   DEV_SESSION_TOKEN_KEY,
 } from "@/app/lib/devSession";
+import { adaptGoogleCredential, type AuthUser, getUserEmail } from "./AuthAdapter";
 
 
 // ============================
@@ -56,7 +54,7 @@ type UseAuthGateReturn = {
   pinError: string;
   pinAttempts: number;
   pinLocked: boolean;
-  user:User;
+  user: AuthUser | null;
   DEV_SESSION_TOKEN_CONTROL_KEY: string;
   TOKEN_KEY: string;
   verifyPin: () => Promise<void>;
@@ -70,7 +68,7 @@ export function useAuthGate(): UseAuthGateReturn  {
   const TOKEN_KEY = DEV_SESSION_TOKEN_KEY;
   const DEV_SESSION_TOKEN_CONTROL_KEY = "false";
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [googleAuthed, setGoogleAuthed] = useState(false);
   const [googleUserId, setGoogleUserId] = useState("");
   const [pinInput, setPinInput] = useState("");
@@ -83,13 +81,6 @@ export function useAuthGate(): UseAuthGateReturn  {
   const MAX_PIN_ATTEMPTS = 3;
   const ALLOWED_GOOGLE_EMAIL = "matheushaliski@gmail.com";
   const pinLocked = pinAttempts >= MAX_PIN_ATTEMPTS;
-
-  type User ={
-    uid: string;
-    displayName?: string;
-    photoURL?: string;
-
-  }
 
 // ============================
 // firebase auth helpers
@@ -136,24 +127,6 @@ export function useAuthGate(): UseAuthGateReturn  {
     return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
   }
 
-  function parseGoogleCredential(credential: string): string {
-    if (!credential) return "";
-    try {
-      const payload = credential.split(".")[1];
-      if (!payload) return "";
-      let normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-      normalized = normalized.padEnd(
-          normalized.length + ((4 - (normalized.length % 4)) % 4),
-          "="
-      );
-      const json = atob(normalized);
-      const data = JSON.parse(json) as { email?: string; sub?: string };
-      return data?.email || data?.sub || "";
-    } catch {
-      return "";
-    }
-  }
-
   const clientId = useMemo(
       () => process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? "",
       []
@@ -170,30 +143,34 @@ export function useAuthGate(): UseAuthGateReturn  {
         return;
       }
 
-      const userId = parseGoogleCredential(idToken);
-      const normalizedEmail = userId.toLowerCase();
-      if (!normalizedEmail) {
+      const googleUser = adaptGoogleCredential(idToken);
+      const normalizedEmail = getUserEmail(googleUser).toLowerCase();
+      if (!normalizedEmail || !googleUser) {
         setGoogleError("Unable to read Google account email.");
         setGoogleAuthed(false);
         setGoogleUserId("");
+        setUser(null);
         return;
       }
       if (normalizedEmail !== ALLOWED_GOOGLE_EMAIL) {
         setGoogleError(`Only ${ALLOWED_GOOGLE_EMAIL} is allowed to sign in.`);
         setGoogleAuthed(false);
         setGoogleUserId("");
+        setUser(null);
         return;
       }
 
       await signInWithGoogleIdToken(idToken);
 
-      setGoogleUserId(userId || "Unknown user");
+      setGoogleUserId(googleUser.email || googleUser.uid || "Unknown user");
+      setUser(googleUser);
       setGoogleAuthed(true);
       setGoogleError("");
     } catch (e: unknown) {
       console.error("[AuthGate] Firebase sign-in failed:", e);
       setGoogleError("Failed to sign in to Firebase.");
       setGoogleAuthed(false);
+      setUser(null);
     }
   }, []);
 
