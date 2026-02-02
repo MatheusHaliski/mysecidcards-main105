@@ -11,12 +11,7 @@ import {
     query,
     updateDoc,
 } from "firebase/firestore";
-import {
-    adaptUser,
-    type AuthUser, getUserDisplayName, getUserEmail,
-    getUserLabel,
-    getUserPhotoUrl,
-} from "@/app/authview/AuthAdapter";
+
 import {firebaseAuthGate} from "../gate/firebaseClient";
 import {useAuthGate} from "@/app/gate/auth";
 import {getDb} from "@/app/gate/getDb";
