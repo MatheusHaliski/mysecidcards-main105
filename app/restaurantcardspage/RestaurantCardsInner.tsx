@@ -11,9 +11,17 @@ import {
     query,
     updateDoc,
 } from "firebase/firestore";
+import {
+    adaptUser,
+    type AuthUser, getUserDisplayName, getUserEmail,
+    getUserLabel,
+    getUserPhotoUrl,
+} from "@/app/authview/AuthAdapter";
 import {firebaseAuthGate} from "../gate/firebaseClient";
 import {useAuthGate} from "@/app/gate/auth";
 import {getDb} from "@/app/gate/getDb";
+import {SearchSelect} from "@/app/restaurantcardspage/selectelement";
+import {getAuth, onAuthStateChanged, signOut} from "firebase/auth";
 const firebaseApp= firebaseAuthGate();
 const hasFirebaseConfig = firebaseAuthGate();
 // ============================
@@ -23,9 +31,9 @@ const PAGE_BG = "bg-[#f6f7fb]";
 const HEADER =
     "rounded-3xl border border-slate-200 bg-white/80  shadow-[0_14px_40px_rgba(15,23,42,0.06)]";
 const CARD =
-    "rounded-2xl border border-slate-200/80 bg-white/85 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.06)]";
+    "rounded-3xl border-2xl border-black-200 bg-white/85 backdrop-blur-xl shadow-[0_10px_30px_rgba(15,23,42,0.06)]";
 const INPUT =
-    "h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-slate-900 placeholder:text-slate-400 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
+    "h-11 w-full rounded-xl border border-black-200 bg-white px-3 text-slate-900 placeholder:text-slate-400 shadow-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300/60";
 const PILL =
     "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm";
 const BTN =
@@ -88,171 +96,22 @@ async function getEmployees(installId: string) {
     return snap.docs.map((d) => ({ id: d.id, ...(d.data()) })) as Employee[];
 }
 
-// --------------------
-// SearchSelect (same tags)
-// --------------------
-function SearchSelect<T extends string>({
-                                            value,
-                                            options,
-                                            onChange,
-                                            placeholder,
-                                            searchPlaceholder,
-                                            disabled,
-                                            getOptionKey,
-                                            getOptionLabel,
-                                            includeAllOption,
-                                            allLabel,
-                                        }: {
-    value: T;
-    options: T[];
-    onChange: (next: T) => void;
-
-    placeholder: string;
-    searchPlaceholder: string;
-
-    disabled?: boolean;
-
-    getOptionKey?: (opt: T) => string;
-    getOptionLabel: (opt: T) => string;
-
-    includeAllOption?: boolean;
-    allLabel?: string;
-}) {
-    const [open, setOpen] = useState(false);
-    const [q, setQ] = useState("");
-    const rootRef = useRef<HTMLDivElement | null>(null);
-    const searchInputId = useId();
-
-    const hasValue = Boolean(value);
-    const buttonLabel = hasValue ? getOptionLabel(value) : allLabel ?? placeholder;
-
-    const filtered = useMemo(() => {
-        const k = q.trim().toLowerCase();
-        if (!k) return options;
-        return options.filter((opt) => getOptionLabel(opt).toLowerCase().includes(k));
-    }, [options, q, getOptionLabel]);
-
-    // ✅ click-outside + ESC
-    useEffect(() => {
-        if (!open) return;
-
-        const onDocMouseDown = (e: MouseEvent) => {
-            const el = rootRef.current;
-            if (!el) return;
-            if (e.target instanceof Node && !el.contains(e.target)) setOpen(false);
-        };
-        const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setOpen(false);
-        };
-
-        document.addEventListener("mousedown", onDocMouseDown);
-        document.addEventListener("keydown", onKeyDown);
-        return () => {
-            document.removeEventListener("mousedown", onDocMouseDown);
-            document.removeEventListener("keydown", onKeyDown);
-        };
-    }, [open]);
-
-    // ✅ autofocus search input
-    useEffect(() => {
-        if (!open) return;
-        const t = setTimeout(() => {
-            const input = rootRef.current?.querySelector<HTMLInputElement>(
-                'input[data-searchselect="1"]'
-            );
-            input?.focus();
-        }, 0);
-        return () => clearTimeout(t);
-    }, [open]);
-
-    return (
-        <div ref={rootRef} className="relative ">
-            <button
-                type="button"
-                disabled={disabled}
-                onClick={() => setOpen((v) => !v)}
-                aria-haspopup="listbox"
-                aria-expanded={open}
-                className={`${BTN} w-full justify-between ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
-            >
-        <span className="text-ellipsis whitespace-nowrap">
-          {buttonLabel}
-        </span>
-                <span className="text-slate-500">{open ? "▲" : "▼"}</span>
-            </button>
-
-            {open && (
-                <div role="listbox" className={DROPDOWN}>
-                    <div className="border-b border-slate-200 p-2.5">
-                        <input
-                            id={searchInputId}
-                            data-searchselect="1"
-                            value={q}
-                            onChange={(e) => setQ(e.target.value)}
-                            placeholder={searchPlaceholder}
-                            className={INPUT}
-                        />
-                    </div>
-
-                    <div className="max-h-[280px] overflow-y-auto">
-                        {includeAllOption ? (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    onChange("" as T);
-                                    setOpen(false);
-                                }}
-                                className={`${DROPDOWN_ITEM} ${!value ? "bg-slate-50" : ""}`}
-                            >
-                                {allLabel ?? placeholder}
-                            </button>
-                        ) : null}
-
-                        {filtered.length === 0 ? (
-                            <div className="px-3 py-2.5 text-sm text-slate-500">No matches.</div>
-                        ) : (
-                            filtered.map((opt) => {
-                                const key = getOptionKey ? getOptionKey(opt) : String(opt);
-                                const selected = opt === value;
-
-                                return (
-                                    <button
-                                        key={key}
-                                        type="button"
-                                        onClick={() => {
-                                            onChange(opt);
-                                            setOpen(false);
-                                        }}
-                                        className={`${DROPDOWN_ITEM} ${selected ? "bg-slate-50" : ""}`}
-                                    >
-                                        <span className="truncate">{getOptionLabel(opt)}</span>
-                                        {selected ? <span className="text-slate-600">✓</span> : null}
-                                    </button>
-                                );
-                            })
-                        )}
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
 export default function RestaurantCardsInner(): JSX.Element | null {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
+    const { firebaseApp, hasFirebaseConfig } = firebaseAuthGate();
     // Filters
     const [nameQuery, setNameQuery] = useState("");
     const [cargo, setCargo] = useState("");
     const [funcao, setFuncao] = useState("");
     const [regional, setRegional] = useState("");
     const [onlyFavorites, setOnlyFavorites] = useState(false);
-    const user = useAuthGate();
+    const [user, setUser] = useState<AuthUser | null>(null);
+    const [authError, setAuthError] = useState("");
     const authReady = useAuthGate();
     const pinCheckReady = useAuthGate();
     const hasAccess = useAuthGate();
-    const authError = useAuthGate();
     const installId = "3436985B-C01A-4318-9345-9C92316F3101";
 
     const router = useRouter();
@@ -374,6 +233,29 @@ export default function RestaurantCardsInner(): JSX.Element | null {
         }
     };
 
+    useEffect(() => {
+        if (!firebaseApp) return undefined;
+        const auth = getAuth(firebaseApp);
+        const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+            setUser(adaptUser(nextUser));
+        });
+        return () => unsubscribe();
+    }, [firebaseApp]);
+
+    const handleSignOut = async () => {
+        if (!firebaseApp) {
+            setAuthError("Firebase auth is not configured.");
+            return;
+        }
+
+        try {
+            await signOut(getAuth(firebaseApp));
+            setAuthError("");
+        } catch (signOutError) {
+            console.error("[RestaurantCardsPage] sign out failed:", signOutError);
+            setAuthError("Failed to sign out.");
+        }
+    };
     // ✅ Gate (RETURNS aqui, nunca dentro de useEffect)
     if (!authReady || !pinCheckReady) {
         return (
@@ -412,10 +294,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
                         <div className="min-w-[240px] text-right">
                             <div className="flex justify-end">
-                                {user?.photoURL ? (
+                                {getUserPhotoUrl(user)? (
                                     <img
-                                        src={user.photoURL}
-                                        alt={`${user.displayName || user.email || "User"} profile`}
+                                        src={getUserPhotoUrl(user)}
+                                        alt={`${getUserDisplayName(user) ||getUserEmail(user) || "User"} profile`}
                                         className="h-10 w-10 rounded-2xl border border-slate-200 object-cover"
                                     />
                                 ) : (
@@ -446,7 +328,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                         </div>
                     </div>
 
-                    <div className="mt-5 h-px w-full bg-slate-200/70" />
+                    <div className="mt-5 h-px w-full bg-white" />
 
                     <div className="relative mt-4">
                         <div className="grid grid-cols-[repeat(auto-fit,minmax(190px,1fr))] gap-3">
@@ -551,7 +433,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                             return (
                                 <article
                                     key={emp.id}
-                                    className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-white`}
+                                    className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-teal-500`}
                                 >
 
                                     <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/35 to-transparent" />
