@@ -65,6 +65,7 @@ type Employee = {
     favorito?: boolean;
     funcao?: string;
     nome?: string;
+    photoURL?: string;
     projetos?: string;
     ramal?: string;
     regional?: string;
@@ -131,6 +132,7 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                 _celular: safeStr(e.celular),
                 _ramal: safeStr(e.ramal),
                 _projetos: safeStr(e.projetos),
+                _photoUrl: safeStr(e.photoURL),
                 _fav: Boolean(e.favorito),
             };
         });
@@ -426,104 +428,118 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-8">
                         {filteredEmployees.map((emp) => {
                             const name = emp._name || "Sem nome";
-                            const titleLine =
-                                [emp._cargo, emp._funcao].filter(Boolean).join(" • ") || "—";
                             const hasContacts = Boolean(emp._email || emp._celular || emp._ramal);
-                            const metaLine = emp._regional ? `📍 ${emp._regional}` : "";
                             const fav = Boolean(emp._fav);
+                            const photoUrl = emp._photoUrl;
 
                             return (
                                 <article
                                     key={emp.id}
                                     className={`${CARD} group relative p-5 min-h-[360px] min-w-[370px] transition hover:-translate-y-0.5 hover:bg-neutral-100`}
                                 >
-
                                     <div className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-black/40 to-transparent" />
 
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div className="min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="break-words text-xl font-semibold text-black leading-snug">
-                                                    {name}
-                                                </h3>
+                                    <div className="flex h-full flex-col">
+                                        <div className="flex flex-1 items-center justify-center border-b-2 border-black pb-4">
+                                            <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-black bg-white">
+                                                {photoUrl ? (
+                                                    <img
+                                                        src={photoUrl}
+                                                        alt={`${name} profile`}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-xs font-semibold text-neutral-500">
+                                                        No photo
+                                                    </span>
+                                                )}
                                             </div>
-
-                                            <div className="mt-2 flex flex-wrap gap-2 -translate-y-[-20px]">
-                                                {emp._cargo ? (
-                                                    <span className={BADGE}>
-      💼 <span className="truncate">Cargo: {emp._cargo}</span>
-    </span>
-                                                ) : null}
-
-                                                {emp._funcao ? (
-                                                    <span className={BADGE}>
-      🧩 <span className="truncate">Função: {emp._funcao}</span>
-    </span>
-                                                ) : null}
-
-                                                {emp._regional ? (
-                                                    <span className={BADGE}>
-      📍 <span className="truncate">Regional: {emp._regional}</span>
-    </span>
-                                                ) : null}
-                                            </div>
-
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleFavorite(emp.id, !fav)}
-                                            aria-label={fav ? "Unfavorite" : "Favorite"}
-                                            className={[
-                                                "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
-                                                "border-2 border-black bg-white shadow-sm",
-                                                "transition hover:bg-neutral-100 active:scale-[0.98]",
-                                                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
-                                            ].join(" ")}
-                                            title={fav ? "Unfavorite" : "Favorite"}
-                                        >
-      <span className={fav ? "text-black text-2xl" : "text-neutral-500 text-2xl"}>
-        {fav ? "★" : "☆"}
-      </span>
-                                        </button>
+                                        <div className="flex flex-1 flex-col pt-4">
+                                            <div className="flex items-start justify-between gap-4">
+                                                <div className="min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className="break-words text-xl font-semibold text-black leading-snug">
+                                                            {name}
+                                                        </h3>
+                                                    </div>
+
+                                                    <div className="mt-2 flex flex-wrap gap-2">
+                                                        {emp._cargo ? (
+                                                            <span className={BADGE}>
+              💼 <span className="truncate">Cargo: {emp._cargo}</span>
+            </span>
+                                                        ) : null}
+
+                                                        {emp._funcao ? (
+                                                            <span className={BADGE}>
+              🧩 <span className="truncate">Função: {emp._funcao}</span>
+            </span>
+                                                        ) : null}
+
+                                                        {emp._regional ? (
+                                                            <span className={BADGE}>
+              📍 <span className="truncate">Regional: {emp._regional}</span>
+            </span>
+                                                        ) : null}
+                                                    </div>
+
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => toggleFavorite(emp.id, !fav)}
+                                                    aria-label={fav ? "Unfavorite" : "Favorite"}
+                                                    className={[
+                                                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl",
+                                                        "border-2 border-black bg-white shadow-sm",
+                                                        "transition hover:bg-neutral-100 active:scale-[0.98]",
+                                                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/40",
+                                                    ].join(" ")}
+                                                    title={fav ? "Unfavorite" : "Favorite"}
+                                                >
+              <span className={fav ? "text-black text-2xl" : "text-neutral-500 text-2xl"}>
+                {fav ? "★" : "☆"}
+              </span>
+                                                </button>
+                                            </div>
+
+                                            {emp._projetos ? (
+                                                <div className="mt-3 flex flex-wrap gap-2">
+            <span className={BADGE_INFO}>
+              📌 <span className="truncate">{emp._projetos}</span>
+            </span>
+                                                </div>
+                                            ) : null}
+
+                                            {hasContacts ? (
+                                                <div className="mt-4 flex flex-wrap gap-3">
+                                                    {emp._email ? (
+                                                        <span className={BADGE_INFO}>
+                ✉️ <span className="truncate">E-mail: {emp._email}</span>
+              </span>
+                                                    ) : null}
+
+                                                    {emp._celular ? (
+                                                        <span className={BADGE_INFO}>
+                📱 <span className="truncate">Celular: {emp._celular}</span>
+              </span>
+                                                    ) : null}
+
+                                                    {emp._ramal ? (
+                                                        <span className={BADGE_INFO}>
+                ☎️ <span className="truncate">Ramal: {emp._ramal}</span>
+              </span>
+                                                    ) : null}
+                                                </div>
+                                            ) : (
+                                                <div className="mt-3 text-base text-neutral-600">
+
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-
-                                    {emp._projetos ? (
-                                        <div className="mt-3 flex flex-wrap gap-2">
-    <span className={BADGE_INFO}>
-      📌 <span className="truncate">{emp._projetos}</span>
-    </span>
-                                        </div>
-                                    ) : null}
-
-
-                                    {hasContacts ? (
-                                        <div className="mt-4 translate-y-4.5 flex flex-wrap gap-3">
-                                            {emp._email ? (
-                                                <span className={BADGE_INFO}>
-        ✉️ <span className="truncate">E-mail: {emp._email}</span>
-      </span>
-                                            ) : null}
-
-                                            {emp._celular ? (
-                                                <span className={BADGE_INFO}>
-        📱 <span className="truncate">Celular: {emp._celular}</span>
-      </span>
-                                            ) : null}
-
-                                            {emp._ramal ? (
-                                                <span className={BADGE_INFO}>
-        ☎️ <span className="truncate">Ramal: {emp._ramal}</span>
-      </span>
-                                            ) : null}
-                                        </div>
-                                    ) : (
-                                        <div className="mt-3 text-base text-neutral-600">
-
-                                        </div>
-                                    )}
-
-
                                 </article>
 
                             );
