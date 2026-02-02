@@ -1,0 +1,11 @@
+<svg width="520" height="120" viewBox="0 0 520 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="velionGradient" x1="0" y1="0" x2="520" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="40%" stop-color="#22C55E"/>
+      <stop offset="75%" stop-color="#FACC15"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+  </defs>
+  <text x="0" y="80" font-family="Inter, Arial, sans-serif" font-size="64" font-weight="700" fill="url(#velionGradient)">Velion Social</text>
+</svg>

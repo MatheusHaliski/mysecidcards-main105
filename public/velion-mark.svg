@@ -1,0 +1,13 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mark" x1="0" y1="160" x2="160" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="40%" stop-color="#22C55E"/>
+      <stop offset="70%" stop-color="#FACC15"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="68" stroke="url(#mark)" stroke-width="8" fill="white" />
+  <rect x="46" y="46" width="68" height="68" rx="16" ry="16" stroke="url(#mark)" stroke-width="8" fill="white" transform="rotate(45 80 80)" />
+  <text x="80" y="96" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800" fill="url(#mark)" text-anchor="middle">V</text>
+</svg>
