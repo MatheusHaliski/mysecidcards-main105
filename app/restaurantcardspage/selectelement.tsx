@@ -93,31 +93,31 @@ export function SearchSelect<T extends string>({
     onClick={() => setOpen((v) => !v)}
     aria-haspopup="listbox"
     aria-expanded={open}
-    className={`w-full text-xs font-semibold uppercase tracking-[0.2em] text-white transition   rounded-xl top-10 bg-[#2563eb] px-4 py-5 text-base font-semibold text-[#e0f2fe] shadow-lg shadow-[#2563eb]/40   ${
+    className={`w-full text-xs font-semibold uppercase tracking-[0.2em] text-black transition   rounded-xl top-10 bg-[#2563eb] px-4 py-5 text-base font-semibold text-black shadow-lg shadow-[#2563eb]/40   ${
         disabled
-            ? "cursor-not-allowed bg-white/5 text-white/40"
+            ? "cursor-not-allowed bg-white/5 text-black"
             : "bg-white/5 "
     }`}
 >
     <span className=" text-ellipsis whitespace-nowrap">
         {buttonLabel}
         </span>
-        <span className="text-white/70">{open ? "▲" : "▼"}</span>
+        <span className="text-white">{open ? "▲" : "▼"}</span>
         </button>
 
     {open && (
         <div
             role="listbox"
-        className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 rounded-2xl border border-white/10 bg-neutral-900/95 shadow-xl shadow-black/30 backdrop-blur"
+        className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 rounded-3xl border border-white/10 bg-white shadow-xl shadow-black/30 backdrop-blur"
         >
-        <div className="border-b border-white/10 p-2.5">
+        <div className="border-b border-black p-2.5">
         <input
             id={searchInputId}
         data-searchselect="1"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={searchPlaceholder}
-        className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-white placeholder:text-white/40 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
+        className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-3 text-black placeholder:text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/40"
             />
             </div>
 
@@ -129,7 +129,7 @@ export function SearchSelect<T extends string>({
         onChange("" as T);
         setOpen(false);
     }}
-        className={`w-full px-3 py-2.5 text-left text-sm text-white transition-all duration-200  ${
+        className={`w-full px-3 py-2.5 text-left text-sm text-black transition-all duration-200  ${
             !value ? "bg-cyan-500/10" : "bg-transparent"
         }`}
     >
@@ -138,7 +138,7 @@ export function SearchSelect<T extends string>({
     ) : null}
 
         {filteredOptions.length === 0 ? (
-            <div className="px-3 py-2.5 text-sm text-white/60">
+            <div className="px-3 py-2.5 text-sm text-black">
                 No matches.
             </div>
         ) : (
@@ -154,7 +154,7 @@ export function SearchSelect<T extends string>({
                     onChange(opt);
                     setOpen(false);
                 }}
-                className={`flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-white transition-all duration-200  ${
+                className={`flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-sm text-black transition-all duration-200  ${
                     selected ? "bg-cyan-500/10" : "bg-transparent"
                 }`}
             >
@@ -163,7 +163,7 @@ export function SearchSelect<T extends string>({
                     ? renderOption(opt, selected)
                     : getOptionLabel(opt)}
                 </span>
-                {selected ? <span className="text-white/80">✓</span> : null}
+                {selected ? <span className="text-black">✓</span> : null}
                 </button>
                 );
                 })
