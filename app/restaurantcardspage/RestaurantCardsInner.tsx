@@ -1,6 +1,6 @@
 "use client";
 
-import {JSX, useEffect, useId, useMemo, useRef, useState} from "react";
+import {JSX, useEffect, useMemo, useState} from "react";
 import { useRouter } from "next/navigation";
 import {
     collection,
@@ -85,6 +85,12 @@ function safeStr(v: unknown) {
     return typeof v === "string" ? v.trim() : "";
 }
 
+function splitProjects(value: string) {
+    return value
+        .split(/[,;\n]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
 
 async function getEmployees(installId: string) {
     if (!db) throw new Error("Firestore not initialized");
@@ -110,6 +116,10 @@ export default function RestaurantCardsInner(): JSX.Element | null {
     const [onlyFavorites, setOnlyFavorites] = useState(false);
     const [user, setUser] = useState<AuthUser | null>(null);
     const [authError, setAuthError] = useState("");
+    const [projectModal, setProjectModal] = useState<{
+        name: string;
+        projects: string[];
+    } | null>(null);
     const authReady = useAuthGate();
     const pinCheckReady = useAuthGate();
     const hasAccess = useAuthGate();
@@ -507,9 +517,24 @@ export default function RestaurantCardsInner(): JSX.Element | null {
 
                                             {emp._projetos ? (
                                                 <div className="mt-3 flex flex-wrap gap-2">
-            <span className={BADGE_INFO}>
-              📌 <span className="truncate">{emp._projetos}</span>
-            </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const projects = splitProjects(emp._projetos);
+                                                            setProjectModal({
+                                                                name,
+                                                                projects: projects.length ? projects : [emp._projetos],
+                                                            });
+                                                        }}
+                                                        className={[
+                                                            "inline-flex items-center gap-2 rounded-full border-2 border-black",
+                                                            "bg-white px-3 py-2 text-sm font-semibold text-black shadow-sm",
+                                                            "transition hover:bg-neutral-100 focus-visible:outline-none",
+                                                            "focus-visible:ring-2 focus-visible:ring-black/40",
+                                                        ].join(" ")}
+                                                    >
+                                                        📌 <span className="truncate">Projetos</span>
+                                                    </button>
                                                 </div>
                                             ) : null}
 
@@ -547,6 +572,39 @@ export default function RestaurantCardsInner(): JSX.Element | null {
                     </div>
                 </section>
             </div>
+            {projectModal ? (
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40 p-4">
+                    <div className={`${CARD} w-full max-w-lg p-6`}>
+                        <div className="flex items-start justify-between gap-4">
+                            <div>
+                                <h2 className="text-xl font-semibold text-black">
+                                    Projetos em andamento
+                                </h2>
+                                <p className="mt-1 text-sm text-neutral-600">
+                                    {projectModal.name}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setProjectModal(null)}
+                                className={BTN}
+                            >
+                                Fechar
+                            </button>
+                        </div>
+                        <ul className="mt-4 space-y-2 text-sm text-black">
+                            {projectModal.projects.map((project) => (
+                                <li
+                                    key={`${projectModal.name}-${project}`}
+                                    className="rounded-2xl border-2 border-black bg-white px-4 py-2 shadow-sm"
+                                >
+                                    {project}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
 }
