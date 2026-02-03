@@ -1,8 +1,9 @@
 "use client";
 
-import {useEffect} from "react";
+import { useEffect } from "react";
 import { useAuthGate } from "@/app/gate/auth";
-import {usePathname, useRouter} from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import VSModal from "@/app/components/vsmodal";
 import {
     clearDevSessionToken,
     getDevSessionToken,
@@ -64,10 +65,14 @@ export default function DevAuthGate() {
                     <div>
                         <p className="text-sm font-medium">Google sign-in</p>
                         <div id="google-signin" className="mt-2 min-h-[44px]" />
-                        {googleError ? <p className="mt-2 text-xs text-rose-500">{googleError}</p> : null}
+                        {googleError ? (
+                            <div className="mt-3">
+                                <VSModal message={googleError} tone="error" />
+                            </div>
+                        ) : null}
                         {googleAuthed ? (
-                            <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">
-                                Signed in as {googleUserId}
+                            <div className="mt-3">
+                                <VSModal message={`Signed in as ${googleUserId}`} tone="success" />
                             </div>
                         ) : null}
                     </div>
@@ -81,8 +86,12 @@ export default function DevAuthGate() {
                             className="w-full rounded-lg border border-zinc-200 px-4 py-2 text-sm text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50"
                             placeholder="Enter your PIN"
                         />
-                        {pinError ? <p className="text-xs text-rose-500">{pinError}</p> : null}
-                        {pinVerified ? <p className="text-xs text-emerald-500">PIN verified.</p> : null}
+                        {pinError ? (
+                            <VSModal message={pinError} tone="error" />
+                        ) : null}
+                        {pinVerified ? (
+                            <VSModal message="PIN verified." tone="success" />
+                        ) : null}
 
                         <button
                             type="button"
