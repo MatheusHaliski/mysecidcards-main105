@@ -48,7 +48,7 @@ export default function AuthShell({ title, subtitle, description, children }: Au
             ].join(" ")}
         >
 
-        {/* ✅ Fundo: glow verde claro + glow amarelo claro (bem leve) */}
+            {/* ✅ Fundo: glow verde claro + glow amarelo claro (bem leve) */}
             <div className="pointer-events-none absolute inset-0">
                 {/* “wash” branco suave (base) */}
                 <div className="absolute inset-0 bg-gradient-to-br from-green-500 via-teal-600 to-orange-500" />
@@ -77,7 +77,7 @@ export default function AuthShell({ title, subtitle, description, children }: Au
                   [background-size:18px_18px]" />
             </div>
 
-            <div className="absolute left-6 border-white w-500 top-1/2 z-20 translate-x-[100px] -translate-y-[600px]">
+            <div className="absolute left-6 border-white w-500 top-1/2 z-20 translate-x-[100px] -translate-y-[900px]">
                 <div
                     className={[
                         "relative",
@@ -307,7 +307,7 @@ export default function AuthShell({ title, subtitle, description, children }: Au
 
                     {/* ✅ FORM RETANGLE: rounded + amber border-8 */}
                     <div
-                            className={[
+                        className={[
                             "space-y-8",
                             "-translate-y-[10px]",
                             "rounded-3xl",
@@ -315,26 +315,26 @@ export default function AuthShell({ title, subtitle, description, children }: Au
                             "border-amber-300",
                             "p-8",
                             "shadow-[0_20px_50px_rgba(0,0,0,0.35)]",
-                            ].join(" ")}
-                            >
+                        ].join(" ")}
+                    >
 
-                    <div className={[
+                        <div className={[
                             "space-y-8",
                             "-translate-y-[10px]",
                             "rounded-3xl",
                             "border-amber-300 border-8", // ✅ requested
-                            "bg-transparent",
+                            "bg-yellow-100",
                             "p-8",
                             "shadow-[0_20px_50px_rgba(0,0,0,0.35)]",
                         ].join(" ")}>
-                            <p className="text-xs font-semibold items-center font-sharetech uppercase tracking-[0.35em] text-[#ffffff]">
+                            <p className="text-xs font-semibold items-center font-sharetech uppercase tracking-[0.35em] text-orange-600">
                                 {title}
                             </p>
-                            <h1 className="text-3xl items-center font-semibold text-[#ffffff]">
+                            <h1 className="text-3xl items-center font-semibold text-orange-600">
                                 {subtitle}
                             </h1>
                             {description ? (
-                                <p className="text-sm font-medium text-white leading-relaxed">
+                                <p className="text-sm font-medium text-orange-600 leading-relaxed">
                                     {description}
                                 </p>
                             ) : null}
