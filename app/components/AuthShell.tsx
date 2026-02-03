@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 type AuthShellProps = {
     title: string;
     subtitle: string;
+    description?: string;
     children: ReactNode;
 };
 
@@ -32,7 +33,7 @@ const GLASS_PANEL =
 const GLASS_INPUT =
     "h-12 w-full rounded-2xl border border-white/14 bg-white/[0.08] backdrop-blur-2xl px-3 text-white placeholder:text-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/35";
 
-export default function AuthShell({ title, subtitle, children }: AuthShellProps) {
+export default function AuthShell({ title, subtitle, description, children }: AuthShellProps) {
     return (
         <div
             className={[
@@ -332,6 +333,11 @@ export default function AuthShell({ title, subtitle, children }: AuthShellProps)
                             <h1 className="text-3xl items-center font-semibold text-[#ffffff]">
                                 {subtitle}
                             </h1>
+                            {description ? (
+                                <p className="text-sm font-medium text-white leading-relaxed">
+                                    {description}
+                                </p>
+                            ) : null}
                         </div>
 
                         {/* children wrapper (kept) */}
