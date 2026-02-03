@@ -20,15 +20,13 @@ export default function ForgetPasswordViewPage() {
         if (!token) router.replace("/");
     }, [tokenLoaded, token, router]);
     return (
-        <AuthShell title="Password reset" subtitle="Send yourself a reset link">
-            <div className="space-y-4 text-lg text-[#1d4ed8]/80">
-                <p>
-                    Enter the email connected to your Social Media account. We will send a
-                    secure link to redefine your password.
-                </p>
-            </div>
-            <form className="space-y-5 text-base items-center justify-end mt-14">
-                <label className="block text-lg font-semibold text-[#0f766e]">
+        <AuthShell
+            title="Password reset"
+            subtitle="Send yourself a reset link"
+            description="Enter the email connected to your Social Media account. We will send a secure link to redefine your password."
+        >
+            <form className="space-y-8 text-base mt-10">
+                <label className="block text-xl font-semibold text-white leading-tight">
                     Email address
                     <input
                         type="email"
@@ -37,28 +35,27 @@ export default function ForgetPasswordViewPage() {
                     />
                 </label>
 
-                <Button
-                    type="submit"
-                    className="inline-flex items-center scale-110 font-semibold translate-x-[315px] text-xs font-semibold uppercase tracking-[0.2em] text-white transition
- rounded-full ..."
-                >
-                    Email the reset link
-                </Button>
+                <div className="flex flex-col items-center gap-4 pt-2">
+                    <Button
+                        type="submit"
+                        className="inline-flex w-full max-w-xs items-center justify-center scale-110 text-xs font-semibold uppercase tracking-[0.2em] text-white transition rounded-full ..."
+                    >
+                        Email the reset link
+                    </Button>
+                    <Button
+                        onClick={() => router.push("/authview")}
+                        className="inline-flex w-full max-w-xs items-center justify-center scale-110 text-xs font-semibold uppercase tracking-[0.2em] text-white transition rounded-full ..."
+                    >
+                        Return
+                    </Button>
+                    <Button
+                        onClick={() => router.push("/signupview")}
+                        className="inline-flex w-full max-w-xs items-center justify-center scale-110 text-xs font-semibold uppercase tracking-[0.2em] text-white transition rounded-full ..."
+                    >
+                        Create an account
+                    </Button>
+                </div>
             </form>
-            <div className="flex flex-col justify-end mt-1 items-center gap-2 text-lg text-[#1d4ed8]/80">
-                <Button
-                    onClick={() => router.push("/authview")}
-                    className="inline-flex items-center scale-110 font-semibold translate-x-[5px] text-xs font-semibold uppercase tracking-[0.2em] text-white transition
- rounded-full ...">
-                    Return
-                </Button>
-                <Button
-                    onClick={() => router.push("/signupview")}
-                    className="inline-flex items-center scale-110 font-semibold translate-x-[5px] text-xs font-semibold uppercase tracking-[0.2em] text-white transition
- rounded-full ...">
-                    Create an account
-                </Button>
-            </div>
         </AuthShell>
     );
 }
