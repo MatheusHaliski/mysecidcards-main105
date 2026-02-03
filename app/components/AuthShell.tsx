@@ -76,7 +76,7 @@ export default function AuthShell({ title, subtitle, children }: AuthShellProps)
                   [background-size:18px_18px]" />
             </div>
 
-            <div className="absolute left-6 border-white w-500 top-1/2 z-20 translate-x-[100px] -translate-y-[850px]">
+            <div className="absolute left-6 border-white w-500 top-1/2 z-20 translate-x-[100px] -translate-y-[600px]">
                 <div
                     className={[
                         "relative",
